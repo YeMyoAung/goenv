@@ -2,21 +2,24 @@ package goenv
 
 import (
 	"log"
-	"strings"
 	"testing"
+	"time"
 )
 
 type Config struct {
-	Name  string `json:"name" validate:"required"`
-	Foods string `json:"foods" validate:"required"`
-}
-
-func (c *Config) FoodArray() []string {
-	return strings.Split(c.Foods, ",")
+	Name      string            `json:"name" validate:"required"`
+	Foods     []string          `json:"foods" validate:"required"`
+	Age       int               `json:"age" validate:"required"`
+	IsStudent bool              `json:"is_student"`
+	Height    float64           `json:"height" validate:"required"`
+	TTL       time.Duration     `json:"ttl" validate:"required"`
+	Headers   map[string]string `json:"headers" validate:"required"`
 }
 
 func TestGoEnvLoader(t *testing.T) {
-	config, err := NewGoEnv[Config](nil)
+	config, err := Load[Config](&Args{
+		FileName: ".env.example",
+	})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -24,5 +27,5 @@ func TestGoEnvLoader(t *testing.T) {
 		t.Fatal("Config was null")
 	}
 
-	log.Println(config.Value)
+	log.Println(config)
 }

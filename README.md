@@ -16,21 +16,23 @@ go get github.com/YeMyoAung/goenv
 import "github.com/YeMyoAung/goenv"
 
 type Config struct {
-    Name  string `json:"name" validate:"required"`
-    Foods string `json:"foods" validate:"required"`
+    Name      string            `json:"name" validate:"required"`
+    Foods     []string          `json:"foods" validate:"required"`
+    Age       int               `json:"age" validate:"required"`
+    IsStudent bool              `json:"is_student"`
+    Height    float64           `json:"height" validate:"required"`
+    TTL       time.Duration     `json:"ttl" validate:"required"`
+    Headers   map[string]string `json:"headers" validate:"required"`
 }
 ```
-
-> **Note:** Only string fields are supported. If you need to work with other data types (e.g., int, bool, slices), you can add custom Getter methods to your struct to handle conversion.
-
 ### 2. Load from environment variables
 
 ```go
-config, err := goenv.NewGoEnv[Config](nil)
+config, err := goenv.Load[Config](nil)
 if err != nil {
     // handle error
 }
-fmt.Println(config.Value.Name)
+fmt.Println(config)
 ```
 
 ### 3. Load from a .env file
@@ -39,22 +41,27 @@ fmt.Println(config.Value.Name)
 args := &goenv.Args{
     FileName: ".env",
 }
-config, err := goenv.NewGoEnv[Config](args)
+config, err := goenv.Load[Config](args)
 if err != nil {
     // handle error
 }
-fmt.Println(config.Value.Name)
+fmt.Println(config)
 ```
 
 ### 4. Validation
 
-By default, all struct fields with the `validate:"required"` tag are validated. You can provide a custom validator via `GoEnvLoaderArgs` if needed.
+By default, all struct fields with the `validate:"required"` tag are validated. You can provide a custom validator via `Args` if needed.
 
 ## Example .env file
 
 ```
-NAME=John Doe
-FOODS=apple,banana,orange
+name=John
+foods=[apple,banana,orange]
+age=30
+is_student=true
+height=1.75
+ttl=1200s
+headers={"Authorization":"Bearer token","X-App":"klink"}
 ```
 
 ## License
